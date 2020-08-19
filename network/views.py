@@ -75,9 +75,13 @@ def register(request):
 
 
 def view_profile(request, username):
-    posts = Posts.objects.filter(user=request.user.id)
-    user = User.objects.get(pk=request.user.id)
+    posts = Posts.objects.filter(user=User.objects.get(
+        username=username)).order_by("-time_posted")
+    selected_user = User.objects.get(username=username)
+    can_follow = username != request.user.username
     context = {
-        "posts": posts
+        "posts": posts,
+        "selected_user": selected_user,
+        "can_follow": can_follow
     }
     return render(request, "network/profile.html", context)

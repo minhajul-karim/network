@@ -6,11 +6,13 @@
     <div class="container">
         <div class="row">
             <div class="col-md-4 mb-3">
-                <h1>{{ user.first_name }} {{ user.last_name }}</h1>
-                <p>Email: {{ user.email }}</p>
+                <h1>{{ selected_user.first_name }} {{ selected_user.last_name }}</h1>
+                <p>Email: {{ selected_user.email }}</p>
                 <p>Followers: 88</p>
                 <p>Followed by: 99</p>
+                {% if can_follow %}
                 <button type="button" class="btn btn-outline-danger">Follow</button>
+                {% endif %}
             </div>
             <div class="col-md-8 border-left py-2">
                 {% for post in posts %}
