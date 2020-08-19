@@ -27,8 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 // When content passed to server was empty
                 errorMessage.textContent = 'You must write something!'
               } else if (data.updated) {
-                // Clear the textarea after status update
-                document.querySelector('#status').value = ''
+                // Reload page to display updated posts
+                window.location.reload()
               }
             })
           // Remove error messages

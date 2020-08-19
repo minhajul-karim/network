@@ -17,7 +17,9 @@ def index(request):
         post = Posts(user=request.user, content=content)
         post.save()
         return JsonResponse({"updated": True})
-    return render(request, "network/index.html")
+    # Gather all posts in reverse ordered by time posted
+    posts = Posts.objects.all().order_by("-time_posted")
+    return render(request, "network/index.html", {"posts": posts})
 
 
 def login_view(request):
