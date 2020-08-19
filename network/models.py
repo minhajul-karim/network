@@ -16,3 +16,16 @@ class Posts(models.Model):
 
     def __str__(self):
         return f"{self.user_id} - {self.time_posted}"
+
+
+class Followers(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        related_name="user",
+        on_delete=models.CASCADE)
+    followed = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.user} followed {self.follows}"

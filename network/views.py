@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Posts
+from .models import User, Posts, Followers
 
 
 def index(request):
@@ -75,13 +75,25 @@ def register(request):
 
 
 def view_profile(request, username):
+    # All posts of the user whose profile we wish to see
     posts = Posts.objects.filter(user=User.objects.get(
         username=username)).order_by("-time_posted")
-    selected_user = User.objects.get(username=username)
-    can_follow = username != request.user.username
+    # user object for username
+    user = User.objects.get(username=username)
+    # The list of people the authonticated user follows
+    user_follows = Followers.objects.filter(user=request.user)
+    # Check if user already follows username
+    follower_found = False
+    for person in user_follows:
+        if str(person.followed) == username:
+            follower_found = True
+            break
+    # Check whether user is visiting his/her own profile
+    self_profile = username == str(request.user)  # True or False
     context = {
         "posts": posts,
-        "selected_user": selected_user,
-        "can_follow": can_follow
+        "the_user": user,
+        "self_profile": self_profile,
+        "follower_found": follower_found
     }
     return render(request, "network/profile.html", context)
