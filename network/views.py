@@ -1,13 +1,22 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Posts
 
 
 def index(request):
+    if request.method == "POST":
+        content = json.loads(request.body)["content"]
+        if not content:
+            # When content is empty
+            return JsonResponse({"invalid_post": True})
+        post = Posts(user=request.user, content=content)
+        post.save()
+        return JsonResponse({"updated": True})
     return render(request, "network/index.html")
 
 
