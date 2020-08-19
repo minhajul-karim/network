@@ -33,7 +33,7 @@
         {% for post in posts %}
         <div class="row mb-4">
             <div class="col-md-8 mx-auto">
-                <a href="#"><strong>{{ post.user | title }}</strong></a>
+                <a href="/profile/{{post.user}}"><strong>{{ post.user | title }}</strong></a>
                 <br>
                 <small class="text-muted">{{ post.time_posted }}</small>
                 <br>
@@ -41,9 +41,6 @@
                 <p>{{ post.content }}</p>
                 <span class="text-dark font-weight-bold mr-1">Like</span>
                 <span>0</span>
-                <!-- <span class="like-button">
-                    <i class="fas fa-thumbs-up text-dark mr-2"></i>99
-                </span> -->
             </div>
         </div>
         {% endfor %}

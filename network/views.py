@@ -72,3 +72,12 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+def view_profile(request, username):
+    posts = Posts.objects.filter(user=request.user.id)
+    user = User.objects.get(pk=request.user.id)
+    context = {
+        "posts": posts
+    }
+    return render(request, "network/profile.html", context)

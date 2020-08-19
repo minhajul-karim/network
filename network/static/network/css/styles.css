@@ -1,3 +1,9 @@
 .row-100 {
   height: calc(100vh - 56px);
 }
+
+@media all and (max-width: 767px) {
+  #profile .border-left {
+    border: 0px !important;
+  }
+}
