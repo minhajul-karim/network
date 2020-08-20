@@ -26,17 +26,15 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
+            <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link text-white"
                         href="/profile/{{user.username}}"><strong>{{ user.username }}</strong></a>
                 </li>
-                {% endif %}
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{% url 'index' %}">All Posts</a>
                 </li>
-                {% if user.is_authenticated %}
                 <li class="nav-item">
                     <a class="nav-link text-white" href="#">Following</a>
                 </li>
