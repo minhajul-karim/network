@@ -12,8 +12,6 @@
     <link rel="shortcut icon" href="{% static 'network/images/favicon-32x32.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <!-- Font Awesome -->
-    <!-- <script src="https://kit.fontawesome.com/4ed4b00f74.js" crossorigin="anonymous"></script> -->
     <link href="{% static 'network/css/styles.css' %}" rel="stylesheet">
 </head>
 
@@ -29,8 +27,8 @@
             <ul class="navbar-nav ml-auto">
                 {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link text-white"
-                        href="/profile/{{user.username}}"><strong>{{ user.username }}</strong></a>
+                    <a class="nav-link text-light"
+                        href="/profile/{{user.username}}"><strong>{{ user.first_name | title }}</strong></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-white" href="{% url 'index' %}">All Posts</a>

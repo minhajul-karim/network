@@ -19,6 +19,7 @@ class Posts(models.Model):
 
 
 class Followers(models.Model):
+    # TODO: Make user (user, followed) combination remains unique
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="user",
@@ -27,5 +28,14 @@ class Followers(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE)
 
+    class Meta:
+        """Make each row of user, followed unique"""
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "followed"],
+                name="unq_user_followed"
+            )
+        ]
+
     def __str__(self):
-        return f"{self.user} followed {self.follows}"
+        return f"{self.user} followed {self.followed}"

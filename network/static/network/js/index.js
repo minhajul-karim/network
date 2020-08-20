@@ -36,6 +36,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       })
   }
+
+  // Follow - unfollow a user
+  if (document.querySelector('#profile')) {
+    document.querySelector('#follow-btn').addEventListener('click', (event) => {
+      fetch('/follow-unfollow', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken'),
+        },
+        body: JSON.stringify({
+          userId: event.target.dataset.userId,
+          alreadyFollows: event.target.dataset.alreadyFollows,
+        }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.followed || data.unfollowed) {
+            window.location.reload()
+            // TODO: Can we just edit the follow button text
+            // with follower/following count and avoid page reload?
+          }
+        })
+    })
+  }
 })
 
 // Get CSRF token

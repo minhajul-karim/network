@@ -2,6 +2,7 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -75,18 +76,25 @@ def register(request):
 
 
 def view_profile(request, username):
+    """
+    Display details of a user profile along with
+    user's all status.
+    """
     # All posts of the user whose profile we wish to see
-    posts = Posts.objects.filter(user=User.objects.get(
-        username=username)).order_by("-time_posted")
+    try:
+        posts = Posts.objects.filter(user=User.objects.get(
+            username=username)).order_by("-time_posted")
+    except ObjectDoesNotExist:
+        return render(request, "network/404.html")
     # user object for username
     user = User.objects.get(username=username)
     # The list of people the authonticated user follows
     user_follows = Followers.objects.filter(user=request.user)
-    # Check if user already follows username
-    follower_found = False
+    # Check if user already follows the username
+    already_follows = False
     for person in user_follows:
         if str(person.followed) == username:
-            follower_found = True
+            already_follows = True
             break
     # Check whether user is visiting his/her own profile
     self_profile = username == str(request.user)  # True or False
@@ -94,6 +102,28 @@ def view_profile(request, username):
         "posts": posts,
         "the_user": user,
         "self_profile": self_profile,
-        "follower_found": follower_found
+        "already_follows": already_follows
     }
     return render(request, "network/profile.html", context)
+
+
+def follow_unfollow(request):
+    if request.method == "POST":
+        # user_id represents the person whom the authneticated user
+        # wants to follow or unfollow
+        user_id = json.loads(request.body)["userId"]
+        already_follows = json.loads(request.body)["alreadyFollows"]
+        if already_follows == "True":
+            follower_to_be_deleted = Followers.objects.get(
+                user=request.user.id,
+                followed=user_id
+            )
+            follower_to_be_deleted.delete()
+            return JsonResponse({"unfollowed": True})
+        else:
+            follower_to_be_added = Followers(
+                user=User.objects.get(pk=request.user.id),
+                followed=User.objects.get(pk=user_id)
+            )
+            follower_to_be_added.save()
+            return JsonResponse({"followed": True})
