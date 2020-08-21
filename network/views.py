@@ -97,12 +97,27 @@ def view_profile(request, username):
             already_follows = True
             break
     # Check whether user is visiting his/her own profile
-    self_profile = username == str(request.user)  # True or False
+    self_profile = username == str(request.user)
+    # Number of follows(How many people username follows)
+    try:
+        follows = Followers.objects.filter(
+            user=User.objects.get(username=username)).count()
+    except ObjectDoesNotExist:
+        follows = 0
+    # Number of followers(How many people follows username)
+    try:
+        followers = Followers.objects.filter(
+            followed=User.objects.get(username=username)).count()
+    except ObjectDoesNotExist:
+        followers = 0
+    print(follows, followers)
     context = {
         "posts": posts,
         "the_user": user,
         "self_profile": self_profile,
-        "already_follows": already_follows
+        "already_follows": already_follows,
+        "followers": followers,
+        "follows": follows
     }
     return render(request, "network/profile.html", context)
 

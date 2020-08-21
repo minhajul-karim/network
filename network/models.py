@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class User(AbstractUser):
@@ -38,4 +39,7 @@ class Followers(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user} followed {self.followed}"
+        try:
+            return f"{self.user} followed {self.followed}"
+        except ObjectDoesNotExist:
+            return "False"

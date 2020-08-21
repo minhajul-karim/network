@@ -8,8 +8,8 @@
             <div class="col-md-4 mb-3">
                 <h1>{{ the_user.first_name }} {{ the_user.last_name }}</h1>
                 <p>Email: {{ the_user.email }}</p>
-                <p>Followers: 88</p>
-                <p>Followed by: 99</p>
+                <p>Followers: {{ followers }}</p>
+                <p>Follows: {{ follows }}</p>
                 {% if not self_profile and not already_follows %}
                 <button type="button" id="follow-btn" class="btn btn-outline-danger" data-user-id={{the_user.id}}
                     data-already-follows={{already_follows}}>Follow</button>
