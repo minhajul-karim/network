@@ -1,5 +1,6 @@
 import json
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
@@ -9,6 +10,7 @@ from django.urls import reverse
 from .models import User, Posts, Followers
 
 
+@login_required
 def index(request):
     if request.method == "POST":
         content = json.loads(request.body)["content"]
@@ -41,6 +43,7 @@ def following_view(request):
     return render(request, "network/index.html", context)
 
 
+@login_required
 def view_profile(request, username):
     """
     Display details of a user profile along with all posts.
@@ -106,7 +109,7 @@ def follow_unfollow(request):
             )
             follower_to_be_added.save()
             return JsonResponse({"followed": True})
-    return JsonResponse({})
+    return render(request, "network/404.html")
 
 
 def login_view(request):
