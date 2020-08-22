@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.conf import settings
 from django.db import models
-from django.core.exceptions import ObjectDoesNotExist
 
 
 class User(AbstractUser):
@@ -16,7 +15,7 @@ class Posts(models.Model):
     content = models.CharField(max_length=300)
 
     def __str__(self):
-        return f"{self.user_id} - {self.time_posted}"
+        return f"{self.user_id} - {self.content}"
 
 
 class Followers(models.Model):
@@ -39,7 +38,4 @@ class Followers(models.Model):
         ]
 
     def __str__(self):
-        try:
-            return f"{self.user} followed {self.followed}"
-        except ObjectDoesNotExist:
-            return "False"
+        return f"{self.user} followed {self.followed}"

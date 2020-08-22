@@ -2,6 +2,7 @@
 
 {% block body %}
 {% if user.is_authenticated %}
+{% if can_post %}
 <!-- New status -->
 <section id="new-status">
     <div class="container">
@@ -25,10 +26,10 @@
             </div>
         </div>
     </div>
-    <!-- <p class="text-center">Posts will appear here soon insha Allah</p> -->
 </section>
+{% endif %}
 
-<section id="all-posts">
+<section id="all-posts" class="my-4">
     <div class="container">
         {% for post in posts %}
         <div class="row mb-4">
@@ -43,6 +44,8 @@
                 <span>0</span>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center">Sorry, no posts found!</p>
         {% endfor %}
     </div>
 </section>
