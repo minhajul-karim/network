@@ -38,7 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Follow - unfollow a user
-  if (document.querySelector('#profile')) {
+  if (
+    document.querySelector('#profile') &&
+    document.querySelector('#follow-btn')
+  ) {
     document.querySelector('#follow-btn').addEventListener('click', (event) => {
       fetch('/follow-unfollow', {
         method: 'POST',

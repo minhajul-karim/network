@@ -14,6 +14,9 @@ class Posts(models.Model):
     time_posted = models.DateTimeField(auto_now_add=True)
     content = models.CharField(max_length=300)
 
+    class Meta:
+        ordering = ["-time_posted"]
+
     def __str__(self):
         return f"{self.user_id} - {self.content}"
 

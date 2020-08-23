@@ -2,10 +2,11 @@ import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponseRedirect, JsonResponse
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from .models import User, Posts, Followers
 
@@ -21,10 +22,14 @@ def index(request):
         post.save()
         return JsonResponse({"updated": True})
     # Gather all posts in reverse ordered by time posted
-    posts = Posts.objects.all().order_by("-time_posted")
+    posts = Posts.objects.all()
+    # Show n posts per page
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     context = {
-        "posts": posts,
-        "can_post": True,
+        "page_obj": page_obj,
+        "can_post": True
     }
     return render(request, "network/index.html", context)
 
@@ -34,11 +39,15 @@ def following_view(request):
     following = Followers.objects.filter(
         user=request.user.id).values_list("followed", flat=True)
     # Post of users in following list
-    posts = Posts.objects.filter(
-        user__in=following).order_by("-time_posted")
+    posts = Posts.objects.filter(user__in=following)
+    print(posts)
+    # Show n posts per page
+    paginator = Paginator(posts, 10)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
     context = {
-        "posts": posts,
-        "can_post": False,
+        "page_obj": page_obj,
+        "can_post": False
     }
     return render(request, "network/index.html", context)
 
@@ -51,7 +60,7 @@ def view_profile(request, username):
     # All posts of the user whose profile we wish to see
     try:
         posts = Posts.objects.filter(user=User.objects.get(
-            username=username)).order_by("-time_posted")
+            username=username))
     except ObjectDoesNotExist:
         return render(request, "network/404.html")
     # user object for username
