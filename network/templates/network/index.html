@@ -29,7 +29,7 @@
 </section>
 {% endif %}
 
-<section id="all-posts" class="my-4">
+<section id="posts" class="my-4">
     <div class="container">
         {% for post in page_obj %}
         <div class="row mb-4">
@@ -40,7 +40,7 @@
                 <br>
                 <a href="#"><small>Edit</small></a>
                 <p>{{ post.content }}</p>
-                <span class="text-dark font-weight-bold mr-1">Like</span>
+                <span class="like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}>Like</span>
                 <span>0</span>
             </div>
         </div>

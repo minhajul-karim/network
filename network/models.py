@@ -7,10 +7,11 @@ class User(AbstractUser):
     pass
 
 
-class Posts(models.Model):
+class Post(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE
+    )
     time_posted = models.DateTimeField(auto_now_add=True)
     content = models.CharField(max_length=300)
 
@@ -21,24 +22,48 @@ class Posts(models.Model):
         return f"{self.user_id} - {self.content}"
 
 
-class Followers(models.Model):
-    # TODO: Make user (user, followed) combination remains unique
+class Follower(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         related_name="user",
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE
+    )
     followed = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE
+    )
 
     class Meta:
         """Make each row of user, followed unique"""
         constraints = [
             models.UniqueConstraint(
                 fields=["user", "followed"],
-                name="unq_user_followed"
+                name="unq_user_follower"
             )
         ]
 
     def __str__(self):
         return f"{self.user} followed {self.followed}"
+
+
+class Like(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE
+    )
+    post = models.ForeignKey(
+        Post,
+        on_delete=models.CASCADE
+    )
+
+    class Meta:
+        """Make each (user, liked post) unique"""
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "post"],
+                name="unq_user_likes"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.user} liked {self.post}"

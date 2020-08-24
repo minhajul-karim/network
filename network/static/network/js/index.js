@@ -64,6 +64,16 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     })
   }
+
+  // Like - unlike
+  if (document.querySelector('#posts')) {
+    document.querySelector('#posts').addEventListener('click', (event) => {
+      if (event.target.id === 'like-btn') {
+        console.log(event.target.dataset.postId)
+        event.target.style.color = '#dc3545'
+      }
+    })
+  }
 })
 
 // Get CSRF token

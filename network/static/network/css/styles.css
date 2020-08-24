@@ -2,6 +2,11 @@
   height: calc(100vh - 56px);
 }
 
+.like {
+  cursor: pointer;
+  color: #343a40;
+}
+
 @media all and (max-width: 767px) {
   #profile .border-left {
     border: 0px !important;
