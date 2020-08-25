@@ -7,9 +7,9 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
-from django.db.models import Count
+from django.db.models import Count, OuterRef, Exists
 
-from .models import User, Post, Follower
+from .models import User, Post, Follower, Like
 
 
 @login_required
@@ -22,9 +22,14 @@ def index(request):
         post = Post(user=request.user, content=content)
         post.save()
         return JsonResponse({"updated": True})
-    # All posts with like informations
-    posts = Post.objects.annotate(number_of_likes=Count(
-        "like__post")).order_by("-time_posted")
+    # All posts with info about whether user has liked
+    # a post and the total number of likes per post
+    posts = Post.objects.annotate(
+        number_of_likes=Count("like__post"),
+        has_liked=Exists(
+            Like.objects.filter(
+                user=request.user,
+                post=OuterRef('pk')))).order_by("-time_posted")
     # Show n posts per page
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")

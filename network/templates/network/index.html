@@ -40,7 +40,15 @@
                 <br>
                 <a href="#"><small>Edit</small></a>
                 <p>{{ post.content }}</p>
-                <span class="like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}>Like</span>
+                {% if post.has_liked %}
+                <span class="text-danger like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}>
+                    Like
+                </span>
+                {% else %}
+                <span class="like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}>
+                    Like
+                </span>
+                {% endif %}
                 <span>{{post.number_of_likes}}</span>
             </div>
         </div>
