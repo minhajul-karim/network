@@ -7,6 +7,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import render
 from django.urls import reverse
 from django.core.paginator import Paginator
+from django.db.models import Count
 
 from .models import User, Post, Follower
 
@@ -21,8 +22,9 @@ def index(request):
         post = Post(user=request.user, content=content)
         post.save()
         return JsonResponse({"updated": True})
-    # Gather all posts in reverse ordered by time posted
-    posts = Post.objects.all()
+    # All posts with like informations
+    posts = Post.objects.annotate(number_of_likes=Count(
+        "like__post")).order_by("-time_posted")
     # Show n posts per page
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
