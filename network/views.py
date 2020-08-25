@@ -46,7 +46,12 @@ def following_view(request):
     following = Follower.objects.filter(
         user=request.user.id).values_list("followed", flat=True)
     # Post of users in following list
-    posts = Post.objects.filter(user__in=following)
+    posts = Post.objects.filter(user__in=following).annotate(
+        number_of_likes=Count("like__post"),
+        has_liked=Exists(
+            Like.objects.filter(
+                user=request.user,
+                post=OuterRef('pk')))).order_by("-time_posted")
     # Show n posts per page
     paginator = Paginator(posts, 10)
     page_number = request.GET.get("page")
