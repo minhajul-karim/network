@@ -2,9 +2,14 @@
   height: calc(100vh - 56px);
 }
 
-.like {
+.liked {
+  color: #dc3545;
   cursor: pointer;
+}
+
+.unliked {
   color: #343a40;
+  cursor: pointer;
 }
 
 @media all and (max-width: 767px) {

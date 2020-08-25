@@ -41,15 +41,17 @@
                 <a href="#"><small>Edit</small></a>
                 <p>{{ post.content }}</p>
                 {% if post.has_liked %}
-                <span class="text-danger like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}>
+                <span class="liked like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
+                    data-has-liked={{post.has_liked}}>
                     Like
                 </span>
                 {% else %}
-                <span class="like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}>
+                <span class="unliked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
+                    data-has-liked={{post.has_liked}}>
                     Like
                 </span>
                 {% endif %}
-                <span>{{post.number_of_likes}}</span>
+                <span id="num-of-likes-{{post.id}}">{{post.number_of_likes}}</span>
             </div>
         </div>
         {% empty %}

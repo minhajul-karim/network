@@ -65,12 +65,37 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // Like - unlike
+  // Like - unlike posts
   if (document.querySelector('#posts')) {
     document.querySelector('#posts').addEventListener('click', (event) => {
       if (event.target.id === 'like-btn') {
-        console.log(event.target.dataset.postId)
-        event.target.style.color = '#dc3545'
+        const { postId, hasLiked } = event.target.dataset
+        let numOfLikes = document.querySelector(`#num-of-likes-${postId}`)
+        fetch('/like-unlike', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken'),
+          },
+          body: JSON.stringify({
+            postId: postId,
+            hasLiked: hasLiked,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.liked) {
+              // Change like button color, data-has-liked attribute and like count
+              event.target.style.color = '#dc3545'
+              event.target.dataset.hasLiked = 'True'
+              numOfLikes.textContent = parseInt(numOfLikes.textContent) + 1
+            } else if (data.unliked) {
+              // Change like button color, data-has-liked attribute and like count
+              event.target.style.color = '#343a40'
+              event.target.dataset.hasLiked = 'False'
+              numOfLikes.textContent = parseInt(numOfLikes.textContent) - 1
+            }
+          })
       }
     })
   }

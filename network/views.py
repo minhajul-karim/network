@@ -127,6 +127,26 @@ def follow_unfollow(request):
     return render(request, "network/404.html")
 
 
+def like_unlike(request):
+    if request.method == "POST":
+        post_id = json.loads(request.body)["postId"]
+        has_liked = json.loads(request.body)["hasLiked"]
+        # When has_likes == "True", delete (user id, post id) from like
+        if has_liked == "True":
+            like = Like.objects.get(user=request.user.id, post=post_id)
+            like.delete()
+            return JsonResponse({"unliked": True})
+        else:
+            # insert (user id, post id) in Like
+            new_like = Like(
+                user=User.objects.get(pk=request.user.id),
+                post=Post.objects.get(pk=post_id)
+            )
+            new_like.save()
+            return JsonResponse({"liked": True})
+    return render(request, "network/404.html")
+
+
 def login_view(request):
     if request.method == "POST":
 
