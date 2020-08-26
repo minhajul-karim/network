@@ -1,8 +1,34 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
+<!-- Modal to edit post -->
+<div class="modal fade" id="editPostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit post</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-post-form">
+                    <div class="form-group">
+                        <textarea class="form-control" id="edit-post-textarea"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="edit-post-btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Profile information -->
-<section id="profile" class="mt-4">
+<section id="profile" class="mt-4 posts">
     <div class="container">
         <div class="row">
             <div class="col-md-4 mb-3">
@@ -26,10 +52,25 @@
                         <br>
                         <small class="text-muted">{{ post.time_posted }}</small>
                         <br>
-                        <a href="#"><small>Edit</small></a>
-                        <p>{{ post.content }}</p>
-                        <span class="text-dark font-weight-bold mr-1">Like</span>
-                        <span>0</span>
+                        {% if post.user_id == user.id %}
+                        <small class="text-primary edit-post-link" data-toggle="modal" data-post-id={{post.id}}
+                            data-target="#editPostModal" id="">
+                            Edit
+                        </small>
+                        {% endif %}
+                        <p id="post-{{post.id}}">{{ post.content }}</p>
+                        {% if post.has_liked %}
+                        <span class="liked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
+                            data-has-liked={{post.has_liked}}>
+                            Like
+                        </span>
+                        {% else %}
+                        <span class="unliked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
+                            data-has-liked={{post.has_liked}}>
+                            Like
+                        </span>
+                        {% endif %}
+                        <span id="num-of-likes-{{post.id}}">{{post.number_of_likes}}</span>
                     </div>
                 </div>
                 {% empty %}

@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   // Post a status
-  if (document.querySelector('#status-form')) {
+  if (document.querySelector('#new-post')) {
     document
-      .querySelector('#status-form')
+      .querySelector('#new-post-form')
       .addEventListener('submit', (event) => {
         event.preventDefault()
         const errorMessage = document.querySelector('#status-error')
@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   }
 
-  // Like - unlike posts
-  if (document.querySelector('#posts')) {
-    document.querySelector('#posts').addEventListener('click', (event) => {
+  // Like-unlike and edit posts
+  if (document.querySelector('.posts')) {
+    document.querySelector('.posts').addEventListener('click', (event) => {
       if (event.target.id === 'like-btn') {
         const { postId, hasLiked } = event.target.dataset
         let numOfLikes = document.querySelector(`#num-of-likes-${postId}`)
@@ -95,6 +95,40 @@ document.addEventListener('DOMContentLoaded', () => {
               event.target.dataset.hasLiked = 'False'
               numOfLikes.textContent = parseInt(numOfLikes.textContent) - 1
             }
+          })
+      } else if (event.target.className.includes('edit-post')) {
+        // Place post content in a textarea upon clicking 'Edit post'
+        const postId = event.target.dataset.postId
+        let content = document.querySelector(`#post-${postId}`).textContent
+        document.querySelector('#edit-post-textarea').value = content
+        document
+          .querySelector('#edit-post-btn')
+          .addEventListener('click', (event) => {
+            const newContent = document.querySelector('#edit-post-textarea')
+              .value
+            $('#myModal').modal('hide')
+            // Send new content with post id to server
+            fetch('/edit-post', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken'),
+              },
+              body: JSON.stringify({
+                postId: postId,
+                content: newContent,
+              }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                if (data.edited) {
+                  // Hide modal and update content
+                  $('#editPostModal').modal('hide')
+                  document.querySelector(
+                    `#post-${postId}`
+                  ).textContent = newContent
+                }
+              })
           })
       }
     })

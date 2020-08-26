@@ -4,7 +4,7 @@
 {% if user.is_authenticated %}
 {% if can_post %}
 <!-- New status -->
-<section id="new-status">
+<section id="new-post">
     <div class="container">
         <div class="row">
             <div class="col-md-8 mx-auto my-3">
@@ -13,13 +13,13 @@
                         New post
                     </div>
                     <div class="card-body">
-                        <form id="status-form">
+                        <form id="new-post-form">
                             <div class="form-group">
-                                <textarea name="content" class="form-control" id="status"
-                                    rows="3">What is going on?</textarea>
+                                <textarea name="content" class="form-control" id="status" rows="3"
+                                    placeholder="What is going on?"></textarea>
                             </div>
                             <span class="text-danger" id="status-error"></span>
-                            <button class="btn btn-danger mb-2 float-right" id="post-button">Post</button>
+                            <button class="btn btn-danger mb-2 float-right" id="post-btn">Post</button>
                         </form>
                     </div>
                 </div>
@@ -29,7 +29,33 @@
 </section>
 {% endif %}
 
-<section id="posts" class="my-4">
+<!-- Modal to edit post -->
+<div class="modal fade" id="editPostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Edit post</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-post-form">
+                    <div class="form-group">
+                        <textarea class="form-control" id="edit-post-textarea"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger" id="edit-post-btn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section id="" class="my-4 posts">
     <div class="container">
         {% for post in page_obj %}
         <div class="row mb-4">
@@ -38,10 +64,15 @@
                 <br>
                 <small class="text-muted">{{ post.time_posted }}</small>
                 <br>
-                <a href="#"><small>Edit</small></a>
-                <p>{{ post.content }}</p>
+                {% if post.user_id == user.id %}
+                <small class="text-primary edit-post-link" data-toggle="modal" data-post-id={{post.id}}
+                    data-target="#editPostModal" id="">
+                    Edit
+                </small>
+                {% endif %}
+                <p id="post-{{post.id}}">{{ post.content }}</p>
                 {% if post.has_liked %}
-                <span class="liked like font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
+                <span class="liked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
                     data-has-liked={{post.has_liked}}>
                     Like
                 </span>

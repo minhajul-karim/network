@@ -12,6 +12,14 @@
   cursor: pointer;
 }
 
+.edit-post-link {
+  cursor: pointer;
+}
+
+#edit-post-textarea {
+  height: 150px;
+}
+
 @media all and (max-width: 767px) {
   #profile .border-left {
     border: 0px !important;

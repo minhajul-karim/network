@@ -70,11 +70,17 @@ def view_profile(request, username):
     """
     # All posts of the user whose profile we wish to see
     try:
-        posts = Post.objects.filter(user=User.objects.get(
-            username=username))
+        # posts = Post.objects.filter(user=User.objects.get(
+        #     username=username))
+        posts = Post.objects.filter(user=User.objects.get(username=username)).annotate(
+            number_of_likes=Count("like__post"),
+            has_liked=Exists(
+                Like.objects.filter(
+                    user=request.user,
+                    post=OuterRef('pk')))).order_by("-time_posted")
     except ObjectDoesNotExist:
         return render(request, "network/404.html")
-    # user object for username
+    # User object for username
     user = User.objects.get(username=username)
     # The list of people the authonticated user follows
     user_follows = Follower.objects.filter(user=request.user)
@@ -149,6 +155,19 @@ def like_unlike(request):
             )
             new_like.save()
             return JsonResponse({"liked": True})
+    return render(request, "network/404.html")
+
+
+def edit_post(request):
+    if request.method == "POST":
+        post_id = json.loads(request.body)["postId"]
+        content = json.loads(request.body)["content"]
+        post = Post.objects.get(pk=post_id)
+        post.content = content
+        post.save()
+        return JsonResponse({
+            "edited": True
+        })
     return render(request, "network/404.html")
 
 
