@@ -25,7 +25,7 @@ def index(request):
     # All posts with info about whether user has liked
     # a post and the total number of likes per post
     posts = Post.objects.annotate(
-        number_of_likes=Count("like__post"),
+        number_of_likes=Count("likes"),
         has_liked=Exists(
             Like.objects.filter(
                 user=request.user,
@@ -70,14 +70,12 @@ def view_profile(request, username):
     """
     # All posts of the user whose profile we wish to see
     try:
-        # posts = Post.objects.filter(user=User.objects.get(
-        #     username=username))
-        posts = Post.objects.filter(
-            user=User.objects.get(username=username)).annotate(
-            number_of_likes=Count("like__post"),
+        user = User.objects.get(username=username)
+        posts = user.posts.all().annotate(
+            number_of_likes=Count("likes"),
             has_liked=Exists(
                 Like.objects.filter(
-                    user=request.user,
+                    user=5,
                     post=OuterRef('pk')))).order_by("-time_posted")
     except ObjectDoesNotExist:
         return render(request, "network/404.html")

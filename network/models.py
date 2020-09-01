@@ -10,6 +10,7 @@ class User(AbstractUser):
 class Post(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        related_name="posts",
         on_delete=models.CASCADE
     )
     time_posted = models.DateTimeField(auto_now_add=True)
@@ -57,6 +58,7 @@ class Like(models.Model):
     )
     post = models.ForeignKey(
         Post,
+        related_name="likes",
         on_delete=models.CASCADE
     )
 

@@ -1,7 +1,8 @@
+import datetime
 from django.test import TestCase
 from django.db import IntegrityError
 
-from . models import User, Follower
+from . models import User, Follower, Post, Like
 
 # Create your tests here.
 
@@ -28,6 +29,35 @@ class NetworkTestCase(TestCase):
         Follower.objects.create(user=u1, followed=u2)
         Follower.objects.create(user=u2, followed=u1)
 
+        # Create posts
+        post1 = Post.objects.create(
+            user=u1,
+            time_posted=datetime.datetime.utcnow(),
+            content="hello"
+        )
+
+        # Create likes
+        Like.objects.create(user=u1, post=post1)
+        Like.objects.create(user=u2, post=post1)
+
+    def test_number_of_posts_of_user(self):
+        """Test number of posts of a user."""
+        user = User.objects.get(username="xyz")
+        num_of_posts = Post.objects.filter(user=user).count()
+        self.assertEqual(num_of_posts, 1)
+
+    def test_number_of_likes(self):
+        """Test number of likes for a post."""
+        post = Post.objects.get(pk=1)
+        self.assertEqual(post.likes.count(), 2)
+
+    def test_duplicate_likes_exception(self):
+        """Test exception for duplicate likes."""
+        post = Post.objects.get(pk=1)
+        user = User.objects.get(pk=1)
+        with self.assertRaises(IntegrityError):
+            Like.objects.create(user=user, post=post)
+
     def test_number_of_followers(self):
         """Test number of followers of a user."""
         user = User.objects.get(username="xyz")
@@ -46,9 +76,21 @@ class NetworkTestCase(TestCase):
         follower = Follower.objects.get(user=user, followed=user)
         self.assertFalse(follower.is_valid_follower())
 
-    def test_duplicate_follower_error(self):
+    def test_duplicate_follower_exception(self):
         """Test error raise when trying to insert duplicate followers."""
         user1 = User.objects.get(username="xyz")
         user2 = User.objects.get(username="mkr")
         with self.assertRaises(IntegrityError):
             Follower.objects.create(user=user1, followed=user2)
+
+    def test_duplicate_username_exception(self):
+        """
+        Test if proper exception is raised while creating a new user
+        with existing username.
+        """
+        with self.assertRaises(IntegrityError):
+            User.objects.create(
+                username="xyz",
+                email="something@someotherthing.com",
+                password="abc123"
+            )
