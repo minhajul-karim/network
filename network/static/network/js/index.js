@@ -60,6 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload()
             // TODO: Can we just edit the follow button text
             // with follower/following count and avoid page reload?
+          } else if (data.error) {
+            console.error("A user can't follow him/herself")
           }
         })
     })

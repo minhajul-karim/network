@@ -42,11 +42,11 @@ def index(request):
 
 
 def following_view(request):
-    # Users in following list
-    following = Follower.objects.filter(
-        user=request.user.id).values_list("followed", flat=True)
+    # The people whom user follows
+    user = User.objects.get(pk=request.user.id)
+    user_follows = user.follows.all().values_list("followed", flat=True)
     # Post of users in following list
-    posts = Post.objects.filter(user__in=following).annotate(
+    posts = Post.objects.filter(user__in=user_follows).annotate(
         number_of_likes=Count("like__post"),
         has_liked=Exists(
             Like.objects.filter(
@@ -72,7 +72,8 @@ def view_profile(request, username):
     try:
         # posts = Post.objects.filter(user=User.objects.get(
         #     username=username))
-        posts = Post.objects.filter(user=User.objects.get(username=username)).annotate(
+        posts = Post.objects.filter(
+            user=User.objects.get(username=username)).annotate(
             number_of_likes=Count("like__post"),
             has_liked=Exists(
                 Like.objects.filter(
@@ -82,7 +83,7 @@ def view_profile(request, username):
         return render(request, "network/404.html")
     # User object for username
     user = User.objects.get(username=username)
-    # The list of people the authonticated user follows
+    # The list of people the authenticated user follows
     user_follows = Follower.objects.filter(user=request.user)
     # Check if user already follows the username
     already_follows = False
@@ -129,11 +130,13 @@ def follow_unfollow(request):
             follower_to_be_deleted.delete()
             return JsonResponse({"unfollowed": True})
         else:
-            follower_to_be_added = Follower(
-                user=User.objects.get(pk=request.user.id),
-                followed=User.objects.get(pk=user_id)
-            )
-            follower_to_be_added.save()
+            try:
+                Follower.objects.create(
+                    user=User.objects.get(pk=request.user.id),
+                    followed=User.objects.get(pk=user_id)
+                )
+            except IntegrityError:
+                return JsonResponse({"error": True})
             return JsonResponse({"followed": True})
     return render(request, "network/404.html")
 

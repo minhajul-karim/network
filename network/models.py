@@ -25,11 +25,12 @@ class Post(models.Model):
 class Follower(models.Model):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        related_name="user",
+        related_name="follows",
         on_delete=models.CASCADE
     )
     followed = models.ForeignKey(
         settings.AUTH_USER_MODEL,
+        related_name="followed_by",
         on_delete=models.CASCADE
     )
 
@@ -44,6 +45,9 @@ class Follower(models.Model):
 
     def __str__(self):
         return f"{self.user} followed {self.followed}"
+
+    def is_valid_follower(self):
+        return self.user != self.followed
 
 
 class Like(models.Model):
