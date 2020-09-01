@@ -76,14 +76,24 @@ class NetworkTestCase(TestCase):
         follower = Follower.objects.get(user=user, followed=user)
         self.assertFalse(follower.is_valid_follower())
 
-    def test_duplicate_follower_exception(self):
+    def test_exception_for_duplicate_row_in_follower_table(self):
         """Test error raise when trying to insert duplicate followers."""
         user1 = User.objects.get(username="xyz")
         user2 = User.objects.get(username="mkr")
         with self.assertRaises(IntegrityError):
             Follower.objects.create(user=user1, followed=user2)
 
-    def test_duplicate_username_exception(self):
+    def test_exception_for_user_who_does_not_follow_anyone(self):
+        """Test exception for a user who does not follow anyone."""
+        user = User.objects.create(
+            username="mnop",
+            email="qrst@uvw.xyz",
+            password="1234567iok"
+        )
+        with self.assertRaises(Follower.DoesNotExist):
+            Follower.objects.get(user=user)
+
+    def test_exception_for_duplicate_username(self):
         """
         Test if proper exception is raised while creating a new user
         with existing username.

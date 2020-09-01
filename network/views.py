@@ -75,7 +75,7 @@ def view_profile(request, username):
             number_of_likes=Count("likes"),
             has_liked=Exists(
                 Like.objects.filter(
-                    user=5,
+                    user=request.user,
                     post=OuterRef('pk')))).order_by("-time_posted")
     except ObjectDoesNotExist:
         return render(request, "network/404.html")
@@ -91,7 +91,7 @@ def view_profile(request, username):
             break
     # Check whether user is visiting his/her own profile
     self_profile = username == str(request.user)
-    # Number of follows(How many people username follows)
+    # Number of people the user follows
     try:
         follows = Follower.objects.filter(
             user=User.objects.get(username=username)).count()
