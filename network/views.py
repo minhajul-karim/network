@@ -47,7 +47,7 @@ def following_view(request):
     user_follows = user.follows.all().values_list("followed", flat=True)
     # Post of users in following list
     posts = Post.objects.filter(user__in=user_follows).annotate(
-        number_of_likes=Count("like__post"),
+        number_of_likes=Count("likes"),
         has_liked=Exists(
             Like.objects.filter(
                 user=request.user,
@@ -63,7 +63,7 @@ def following_view(request):
     return render(request, "network/index.html", context)
 
 
-@login_required
+@ login_required
 def view_profile(request, username):
     """
     Display details of a user profile along with all posts.

@@ -1,5 +1,5 @@
 import datetime
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.db import IntegrityError
 
 from . models import User, Follower, Post, Like
@@ -12,15 +12,13 @@ class NetworkTestCase(TestCase):
     def setUp(self):
 
         # Create users
-        u1 = User.objects.create(
+        u1 = User.objects.create_user(
             username="xyz",
-            email="something@someotherthing.com",
             password="abc123"
         )
 
-        u2 = User.objects.create(
+        u2 = User.objects.create_user(
             username="mkr",
-            email="something@someotherthingelse.com",
             password="1234567iok"
         )
 
@@ -36,16 +34,25 @@ class NetworkTestCase(TestCase):
             content="hello"
         )
 
+        post2 = Post.objects.create(
+            user=u1,
+            time_posted=datetime.datetime.utcnow(),
+            content="hi"
+        )
+
         # Create likes
         Like.objects.create(user=u1, post=post1)
         Like.objects.create(user=u2, post=post1)
+        Like.objects.create(user=u2, post=post2)
 
+    # Post
     def test_number_of_posts_of_user(self):
         """Test number of posts of a user."""
         user = User.objects.get(username="xyz")
         num_of_posts = Post.objects.filter(user=user).count()
-        self.assertEqual(num_of_posts, 1)
+        self.assertEqual(num_of_posts, 2)
 
+    # Like
     def test_number_of_likes(self):
         """Test number of likes for a post."""
         post = Post.objects.get(pk=1)
@@ -58,6 +65,7 @@ class NetworkTestCase(TestCase):
         with self.assertRaises(IntegrityError):
             Like.objects.create(user=user, post=post)
 
+    # Follower
     def test_number_of_followers(self):
         """Test number of followers of a user."""
         user = User.objects.get(username="xyz")
@@ -93,6 +101,7 @@ class NetworkTestCase(TestCase):
         with self.assertRaises(Follower.DoesNotExist):
             Follower.objects.get(user=user)
 
+    # Register
     def test_exception_for_duplicate_username(self):
         """
         Test if proper exception is raised while creating a new user
@@ -104,3 +113,46 @@ class NetworkTestCase(TestCase):
                 email="something@someotherthing.com",
                 password="abc123"
             )
+
+    # Views
+    def test_index_page_status_code_with_num_of_posts(self):
+        """Test if index page has 200 status code and n posts."""
+        user = User.objects.get(pk=1)
+        c = Client()
+        c.login(username=user.username, password="abc123")
+        response = c.get("/")
+        num_of_posts = len(response.context["page_obj"])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(num_of_posts, 2)
+
+    def test_profile_page_status_code_with_num_of_posts(self):
+        """Test status code a profile page with count of his/her posts."""
+        user = User.objects.get(pk=1)
+        c = Client()
+        c.login(username=user.username, password="abc123")
+        response = c.get(f"/profile/{user.username}")
+        num_of_posts = len(response.context["posts"])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(num_of_posts, 2)
+
+    def test_following_page_status_code_with_num_of_posts(self):
+        """Test status code following page with total number of posts."""
+        user = User.objects.get(pk=1)
+        c = Client()
+        c.login(username=user.username, password="abc123")
+        response = c.get("/following")
+        num_of_posts = len(response.context["page_obj"])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(num_of_posts, 2)
+
+    def test_registration_page_status_code(self):
+        """Test status code of registration page."""
+        c = Client()
+        response = c.get("/register")
+        self.assertEqual(response.status_code, 200)
+
+    def test_login_page_status_code(self):
+        """Test status code of login page."""
+        c = Client()
+        response = c.get("/login")
+        self.assertEqual(response.status_code, 200)

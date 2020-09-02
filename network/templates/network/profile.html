@@ -1,83 +1,85 @@
 {% extends "network/layout.html" %}
 
+{% block title %}{{ the_user.first_name }} - Social Network{% endblock %}</title>
+
 {% block body %}
 <!-- Modal to edit post -->
 <div class="modal fade" id="editPostModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Edit post</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="edit-post-form">
-                    <div class="form-group">
-                        <textarea class="form-control" id="edit-post-textarea"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger" id="edit-post-btn">Save</button>
-            </div>
-        </div>
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-post-form">
+          <div class="form-group">
+            <textarea class="form-control" id="edit-post-textarea"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger" id="edit-post-btn">Save</button>
+      </div>
     </div>
+  </div>
 </div>
 
 <!-- Profile information -->
 <section id="profile" class="mt-4 posts">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <h1>{{ the_user.first_name }} {{ the_user.last_name }}</h1>
-                <p>Email: {{ the_user.email }}</p>
-                <p>Followers: {{ followers }}</p>
-                <p>Follows: {{ follows }}</p>
-                {% if not self_profile and not already_follows %}
-                <button type="button" id="follow-btn" class="btn btn-outline-danger" data-user-id={{the_user.id}}
-                    data-already-follows={{already_follows}}>Follow</button>
-                {% elif not self_profile and already_follows %}
-                <button type="button" id="follow-btn" class="btn btn-outline-danger" data-user-id={{the_user.id}}
-                    data-already-follows={{already_follows}}>Unfollow</button>
-                {% endif %}
-            </div>
-            <div class="col-md-8 border-left py-2">
-                {% for post in posts %}
-                <div class="row mb-4">
-                    <div class="col-md-8 mx-auto">
-                        <a href="/profile/{{post.user}}"><strong>{{ post.user | title }}</strong></a>
-                        <br>
-                        <small class="text-muted">{{ post.time_posted }}</small>
-                        <br>
-                        {% if post.user_id == user.id %}
-                        <small class="text-primary edit-post-link" data-toggle="modal" data-post-id={{post.id}}
-                            data-target="#editPostModal" id="">
-                            Edit
-                        </small>
-                        {% endif %}
-                        <p id="post-{{post.id}}">{{ post.content }}</p>
-                        {% if post.has_liked %}
-                        <span class="liked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
-                            data-has-liked={{post.has_liked}}>
-                            Like
-                        </span>
-                        {% else %}
-                        <span class="unliked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
-                            data-has-liked={{post.has_liked}}>
-                            Like
-                        </span>
-                        {% endif %}
-                        <span id="num-of-likes-{{post.id}}">{{post.number_of_likes}}</span>
-                    </div>
-                </div>
-                {% empty %}
-                <p class="text-center">Sorry, no posts found!</p>
-                {% endfor %}
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <h1>{{ the_user.first_name }} {{ the_user.last_name }}</h1>
+        <p>Email: {{ the_user.email }}</p>
+        <p>Followers: {{ followers }}</p>
+        <p>Follows: {{ follows }}</p>
+        {% if not self_profile and not already_follows %}
+        <button type="button" id="follow-btn" class="btn btn-outline-danger" data-user-id={{the_user.id}}
+          data-already-follows={{already_follows}}>Follow</button>
+        {% elif not self_profile and already_follows %}
+        <button type="button" id="follow-btn" class="btn btn-outline-danger" data-user-id={{the_user.id}}
+          data-already-follows={{already_follows}}>Unfollow</button>
+        {% endif %}
+      </div>
+      <div class="col-md-8 border-left py-2">
+        {% for post in posts %}
+        <div class="row mb-4">
+          <div class="col-md-8 mx-auto">
+            <a href="/profile/{{post.user}}"><strong>{{ post.user | title }}</strong></a>
+            <br>
+            <small class="text-muted">{{ post.time_posted }}</small>
+            <br>
+            {% if post.user_id == user.id %}
+            <small class="text-primary edit-post-link" data-toggle="modal" data-post-id={{post.id}}
+              data-target="#editPostModal" id="">
+              Edit
+            </small>
+            {% endif %}
+            <p id="post-{{post.id}}">{{ post.content }}</p>
+            {% if post.has_liked %}
+            <span class="liked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
+              data-has-liked={{post.has_liked}}>
+              Like
+            </span>
+            {% else %}
+            <span class="unliked font-weight-bold mr-1" id="like-btn" data-post-id={{post.id}}
+              data-has-liked={{post.has_liked}}>
+              Like
+            </span>
+            {% endif %}
+            <span id="num-of-likes-{{post.id}}">{{post.number_of_likes}}</span>
+          </div>
         </div>
+        {% empty %}
+        <p class="text-center">Sorry, no posts found!</p>
+        {% endfor %}
+      </div>
     </div>
+  </div>
 </section>
 {% endblock %}
