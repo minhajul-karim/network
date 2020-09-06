@@ -9,7 +9,7 @@
       <h1 class="mb-3">Register</h1>
 
       {% if message %}
-      <div>{{ message }}</div>
+      <div id="error-message" class="text-danger mb-1">{{ message }}</div>
       {% endif %}
 
       <form action="{% url 'register' %}" method="post">
@@ -32,7 +32,7 @@
         <div class="form-group">
           <input class="form-control" type="password" name="confirmation" placeholder="Confirm Password">
         </div>
-        <input class="btn btn-danger mb-2" type="submit" value="Register">
+        <input class="btn btn-danger mb-2" id="register-btn" type="submit" value="Register">
       </form>
 
       <p>Already have an account? <a href="{% url 'login' %}">Log In here.</a></p>
