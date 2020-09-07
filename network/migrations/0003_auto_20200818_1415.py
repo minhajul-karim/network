@@ -9,6 +9,8 @@ class Migration(migrations.Migration):
         ('network', '0002_post'),
     ]
 
+    atomic = False
+
     operations = [
         migrations.RenameModel(
             old_name='Post',

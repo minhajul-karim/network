@@ -9,6 +9,8 @@ class Migration(migrations.Migration):
         ('network', '0005_auto_20200819_1711'),
     ]
 
+    atomic = False
+
     operations = [
         migrations.RenameModel(
             old_name='Follow',
