@@ -1,0 +1,27 @@
+.row-100 {
+  height: calc(100vh - 56px);
+}
+
+.liked {
+  color: #dc3545;
+  cursor: pointer;
+}
+
+.unliked {
+  color: #343a40;
+  cursor: pointer;
+}
+
+.edit-post-link {
+  cursor: pointer;
+}
+
+#edit-post-textarea {
+  height: 150px;
+}
+
+@media all and (max-width: 767px) {
+  #profile .border-left {
+    border: 0px !important;
+  }
+}
