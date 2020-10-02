@@ -1,6 +1,8 @@
 name: Unit test for social network
 on: push
-
+  brances:
+    - '*'
+    - '!deploy'
 jobs:
   test_network:
     runs-on: ubuntu-latest
