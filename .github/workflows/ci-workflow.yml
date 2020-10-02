@@ -1,5 +1,8 @@
 name: Unit test for social network
 on: push
+  branches:
+    - '*'
+    - '!deploy'
 
 jobs:
   test_network:
