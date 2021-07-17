@@ -63,7 +63,7 @@ def following_view(request):
     return render(request, "network/index.html", context)
 
 
-@ login_required
+@login_required
 def view_profile(request, username):
     """
     Display details of a user profile along with all posts.
@@ -207,6 +207,12 @@ def register(request):
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
+
+        # Check empty input field
+        if username == "" or email == "" or first_name == "" or last_name == "" or password == "" or confirmation == "":
+            return render(request, "network/register.html", {
+                "message": "Please fill up all fields."
+            })
         if password != confirmation:
             return render(request, "network/register.html", {
                 "message": "Passwords must match."
